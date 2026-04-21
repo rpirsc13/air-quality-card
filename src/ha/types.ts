@@ -23,8 +23,9 @@ export interface SensorPreset {
   step: number;
   step_low?: number;
   step_high?: number;
-  mode: 'centric' | 'heatflow';
+  mode: 'centric' | 'heatflow' | 'quality';
   min_limit?: number;
+  limits?: number[];
   override?: string;
   category?: 'water_chemistry' | 'chemical_balance' | 'treatment' | 'equipment';
 }
@@ -53,6 +54,7 @@ export interface ColorConfig {
   warn: string;
   normal: string;
   cool: string;
+  hazardous: string;
   marker: string;
   hi_low: string;
 }
@@ -70,8 +72,10 @@ export interface SensorUserConfig {
   unit?: string;
   icon?: string;
   image_url?: string;
-  mode?: 'centric' | 'heatflow';
+  mode?: 'centric' | 'heatflow' | 'quality';
   min_limit?: number;
+  limits?: number[];
+  blink_threshold?: 'warning' | 'bad' | 'hazardous';
   override_value?: string;
   override?: boolean;
   invalid?: boolean;
@@ -134,10 +138,12 @@ export interface SensorData {
   battery_level?: number | null;
   battery_icon?: string;
   battery_color?: string;
+  blink?: boolean;
 }
 
 export interface TranslationSet {
   state: Record<string, string>;
+  quality: Record<string, string>;
   sensor: Record<string, string>;
   time: Record<string, string>;
   time_plural: Record<string, string>;

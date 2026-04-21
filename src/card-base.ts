@@ -122,6 +122,8 @@ export class MonitorCardBase extends LitElement {
           sensor.last_updated_attribute,
           sensor.setpoint_entity,
           sensor.min_limit_entity,
+          sensor.limits,
+          sensor.blink_threshold,
         );
 
         if (sensor.availability_entity) {
@@ -188,6 +190,8 @@ export class MonitorCardBase extends LitElement {
     last_updated_attribute?: string | undefined,
     setpoint_entity?: string | undefined,
     min_limit_entity?: string | undefined,
+    limits?: number[] | undefined,
+    blink_threshold?: 'warning' | 'bad' | 'hazardous' | undefined,
   ): SensorData {
     const newData: any = {};
     const config = this.getConfig();
@@ -348,11 +352,23 @@ export class MonitorCardBase extends LitElement {
         : min_limit !== undefined
           ? Number(min_limit)
           : -Infinity;
-    const sp_minus_2 = Math.max(minLimitVal, sp_val - 2 * sp_step_low);
-    const sp_minus_1 = Math.max(minLimitVal, sp_val - sp_step_low);
-    const sp_0 = Math.max(minLimitVal, sp_val);
-    const sp_plus_1 = Math.max(minLimitVal, sp_val + sp_step_high);
-    const sp_plus_2 = Math.max(minLimitVal, sp_val + 2 * sp_step_high);
+
+    let sp_minus_2, sp_minus_1, sp_0, sp_plus_1, sp_plus_2;
+    if (mode === 'quality' && limits && limits.length === 4) {
+      // In quality mode we use [0, limit1, limit2, limit3, limit4] (or scaled versions)
+      // Usually limits represent boundaries for OK, Warning, Bad, Hazardous
+      sp_minus_2 = Math.max(minLimitVal, 0); // start of bar
+      sp_minus_1 = Math.max(minLimitVal, limits[0]);
+      sp_0 = Math.max(minLimitVal, limits[1]);
+      sp_plus_1 = Math.max(minLimitVal, limits[2]);
+      sp_plus_2 = Math.max(minLimitVal, limits[3]);
+    } else {
+      sp_minus_2 = Math.max(minLimitVal, sp_val - 2 * sp_step_low);
+      sp_minus_1 = Math.max(minLimitVal, sp_val - sp_step_low);
+      sp_0 = Math.max(minLimitVal, sp_val);
+      sp_plus_1 = Math.max(minLimitVal, sp_val + sp_step_high);
+      sp_plus_2 = Math.max(minLimitVal, sp_val + 2 * sp_step_high);
+    }
 
     newData.setpoint_class = [
       sp_minus_2.toFixed(countDecimals),
@@ -369,7 +385,31 @@ export class MonitorCardBase extends LitElement {
       newData.value = Math.max(minLimitVal, newData.value);
     }
 
-    if (mode === 'heatflow') {
+    let severityLevel = '';
+
+    if (mode === 'quality' && limits && limits.length === 4) {
+      if (Number(newData.value) < Number(newData.setpoint_class[1])) {
+        newData.state = config.display.show_labels ? this.getTranslatedText('quality.1') : '';
+        newData.color = config.colors.cool;
+        severityLevel = 'perfect';
+      } else if (Number(newData.value) < Number(newData.setpoint_class[2])) {
+        newData.state = config.display.show_labels ? this.getTranslatedText('quality.2') : '';
+        newData.color = config.colors.normal;
+        severityLevel = 'ok';
+      } else if (Number(newData.value) < Number(newData.setpoint_class[3])) {
+        newData.state = config.display.show_labels ? this.getTranslatedText('quality.3') : '';
+        newData.color = config.colors.low;
+        severityLevel = 'warning';
+      } else if (Number(newData.value) < Number(newData.setpoint_class[4])) {
+        newData.state = config.display.show_labels ? this.getTranslatedText('quality.4') : '';
+        newData.color = config.colors.warn;
+        severityLevel = 'bad';
+      } else {
+        newData.state = config.display.show_labels ? this.getTranslatedText('quality.5') : '';
+        newData.color = config.colors.hazardous;
+        severityLevel = 'hazardous';
+      }
+    } else if (mode === 'heatflow') {
       if (Number(newData.value) < Number(newData.setpoint_class[1])) {
         newData.state = config.display.show_labels ? this.getTranslatedText('state.1') : '';
         newData.color = config.colors.cool;
@@ -418,26 +458,70 @@ export class MonitorCardBase extends LitElement {
     }
     newData.progressClass = name === 'temperature' ? 'progress-temp' : 'progress';
 
-    // Bar width: 3 steps below setpoint + 3 steps above setpoint
-    const barLeft = sp_val - 3 * sp_step_low;
-    const barWidth = 3 * sp_step_low + 3 * sp_step_high;
+    // Blink logic
+    newData.blink = false;
+    if (blink_threshold) {
+      if (blink_threshold === 'warning') {
+        if (severityLevel === 'warning' || severityLevel === 'bad' || severityLevel === 'hazardous') {
+          newData.blink = true;
+        }
+      } else if (blink_threshold === 'bad') {
+        if (severityLevel === 'bad' || severityLevel === 'hazardous') {
+          newData.blink = true;
+        }
+      } else if (blink_threshold === 'hazardous') {
+        if (severityLevel === 'hazardous') {
+          newData.blink = true;
+        }
+      }
+    }
 
-    // Unified ratio formula: maps value to [0, 1] within the bar range
-    const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
-    const toRatio = (v: number) => (barWidth > 0 ? clamp01((v - barLeft) / barWidth) : 0);
+    // Bar width and ratios calculation
+    let barLeft, barWidth;
+    let toRatio;
+
+    if (mode === 'quality' && limits && limits.length === 4) {
+      // In quality mode, we map values to 5 equal segments:
+      // [0, limit1] -> 0 to 0.2
+      // [limit1, limit2] -> 0.2 to 0.4
+      // [limit2, limit3] -> 0.4 to 0.6
+      // [limit3, limit4] -> 0.6 to 0.8
+      // [limit4, limit4 + limit4 - limit3] -> 0.8 to 1.0
+
+      const limitsExtended = [0, limits[0], limits[1], limits[2], limits[3], limits[3] + (limits[3] - limits[2])];
+
+      toRatio = (v: number) => {
+        if (v <= limitsExtended[0]) return 0;
+        if (v >= limitsExtended[5]) return 1;
+
+        for (let i = 0; i < 5; i++) {
+          if (v >= limitsExtended[i] && v <= limitsExtended[i+1]) {
+            const range = limitsExtended[i+1] - limitsExtended[i];
+            const progress = range > 0 ? (v - limitsExtended[i]) / range : 0;
+            return (i * 0.2) + (progress * 0.2);
+          }
+        }
+        return 1;
+      };
+    } else {
+      barLeft = sp_val - 3 * sp_step_low;
+      barWidth = 3 * sp_step_low + 3 * sp_step_high;
+      const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+      toRatio = (v: number) => (barWidth > 0 ? clamp01((v - barLeft) / barWidth) : 0);
+    }
 
     const ratio = toRatio(newData.value);
     newData.pct = (ratio * 100).toFixed(1);
     newData.pct_marker = ratio * 100;
-    newData.side_align = newData.value > sp_val ? 'right' : 'left';
-    newData.pct_cursor = newData.value > sp_val ? 100 - ratio * 100 : ratio * 100;
-    newData.pct_state_step = newData.value > sp_val ? 100 - ratio * 100 + 1 : ratio * 100 + 1;
+    newData.side_align = mode === 'quality' ? 'left' : (newData.value > sp_val ? 'right' : 'left');
+    newData.pct_cursor = mode === 'quality' ? ratio * 100 : (newData.value > sp_val ? 100 - ratio * 100 : ratio * 100);
+    newData.pct_state_step = mode === 'quality' ? ratio * 100 + 1 : (newData.value > sp_val ? 100 - ratio * 100 + 1 : ratio * 100 + 1);
     const ratioMinVal = toRatio(newData.min_value) * 100;
     const ratioMaxVal = toRatio(newData.max_value) * 100;
-    newData.pct_min = newData.value > sp_val ? 100 - ratioMinVal : ratioMinVal;
-    newData.pct_max = newData.value > sp_val ? 100 - ratioMaxVal : ratioMaxVal;
+    newData.pct_min = mode === 'quality' ? ratioMinVal : (newData.value > sp_val ? 100 - ratioMinVal : ratioMinVal);
+    newData.pct_max = mode === 'quality' ? ratioMaxVal : (newData.value > sp_val ? 100 - ratioMaxVal : ratioMaxVal);
 
-    // Label positions: same formula applied to each label value
+    // Label positions
     newData.label_positions = [
       toRatio(sp_minus_2) * 100,
       toRatio(sp_minus_1) * 100,
