@@ -156,6 +156,24 @@ export class MonitorCardBase extends LitElement {
             }
           }
         }
+
+        if (sensor.window_entity) {
+          const windowState = this.hass?.states?.[sensor.window_entity];
+          if (windowState && windowState.state !== 'unavailable' && windowState.state !== 'unknown') {
+            const isOpen = ['on', 'open', 'true', '1'].includes(windowState.state.toLowerCase());
+            data[sensorKey].window_icon = isOpen ? 'mdi:window-open' : 'mdi:window-closed';
+            data[sensorKey].window_state = isOpen ? 'open' : 'closed';
+          }
+        }
+
+        if (sensor.fan_entity) {
+          const fanState = this.hass?.states?.[sensor.fan_entity];
+          if (fanState && fanState.state !== 'unavailable' && fanState.state !== 'unknown') {
+            const isOn = ['on', 'true', '1'].includes(fanState.state.toLowerCase());
+            data[sensorKey].fan_icon = 'mdi:fan';
+            data[sensorKey].fan_state = isOn ? 'on' : 'off';
+          }
+        }
       });
     });
 

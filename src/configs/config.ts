@@ -7,6 +7,7 @@ export const DEFAULT_DISPLAY: DisplayConfig = {
   show_last_updated: false,
   show_icons: true,
   show_units: true,
+  icons_inline: true,
   gradient: true,
   language: 'en',
 };

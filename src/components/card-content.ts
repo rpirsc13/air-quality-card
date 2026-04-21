@@ -200,6 +200,26 @@ export class cardContent {
               >
             </div>
           </div>
+          ${config.display.icons_inline === false && (data.battery_icon || data.window_icon || data.fan_icon)
+            ? html`
+                <div class="right-side-icons">
+                  ${data.battery_icon
+                    ? html`<div style="display:flex; flex-direction:column; align-items:center; color: ${data.battery_color};">
+                        <ha-icon icon="${data.battery_icon}" style="--mdc-icon-size: 14px;"></ha-icon>
+                        ${data.battery_level != null ? html`<span style="font-size: 8px;">${data.battery_level}%</span>` : ''}
+                      </div>`
+                    : ''}
+                  ${data.window_icon
+                    ? html`<ha-icon icon="${data.window_icon}" style="--mdc-icon-size: 14px; color: var(--secondary-text-color);"></ha-icon>`
+                    : ''}
+                  ${data.fan_icon
+                    ? html`<span class="${data.fan_state === 'on' ? 'fan-animating' : ''}">
+                        <ha-icon icon="${data.fan_icon}" style="--mdc-icon-size: 14px; color: ${data.fan_state === 'on' ? 'var(--state-fan-active-color, var(--state-active-color))' : 'var(--secondary-text-color)'};"></ha-icon>
+                      </span>`
+                    : ''}
+                </div>
+              `
+            : ''}
         </div>
       </div>
       <div
@@ -207,11 +227,25 @@ export class cardContent {
       >
         <span>
           ${data.title}
-          ${data.battery_icon
-            ? html`<span class="battery-indicator" style="color: ${data.battery_color};">
-                <ha-icon icon="${data.battery_icon}" style="--mdc-icon-size: 14px;"></ha-icon>
-                ${data.battery_level != null ? html`${data.battery_level}%` : ''}
-              </span>`
+          ${config.display.icons_inline !== false
+            ? html`
+                ${data.battery_icon
+                  ? html`<span class="battery-indicator" style="color: ${data.battery_color};">
+                      <ha-icon icon="${data.battery_icon}" style="--mdc-icon-size: 14px;"></ha-icon>
+                      ${data.battery_level != null ? html`${data.battery_level}%` : ''}
+                    </span>`
+                  : ''}
+                ${data.window_icon
+                  ? html`<span class="window-indicator">
+                      <ha-icon icon="${data.window_icon}" style="--mdc-icon-size: 14px; color: var(--secondary-text-color);"></ha-icon>
+                    </span>`
+                  : ''}
+                ${data.fan_icon
+                  ? html`<span class="fan-indicator ${data.fan_state === 'on' ? 'fan-animating' : ''}">
+                      <ha-icon icon="${data.fan_icon}" style="--mdc-icon-size: 14px; color: ${data.fan_state === 'on' ? 'var(--state-fan-active-color, var(--state-active-color))' : 'var(--secondary-text-color)'};"></ha-icon>
+                    </span>`
+                  : ''}
+              `
             : ''}
         </span>
         ${data.last_updated
@@ -339,12 +373,32 @@ export class cardContent {
               >
                 &nbsp; ${data.title} ${data.value != null ? `${data.value} ${data.unit}` : '—'}
                 ${data.separator} ${data.state}
-                ${data.battery_icon
-                  ? html`<ha-icon
-                        icon="${data.battery_icon}"
-                        style="--mdc-icon-size: 12px; color: ${data.battery_color};"
-                      ></ha-icon
-                      >${data.battery_level != null ? html`${data.battery_level}%` : ''}`
+                ${config.display.icons_inline !== false
+                  ? html`
+                      ${data.battery_icon
+                        ? html`<ha-icon
+                              icon="${data.battery_icon}"
+                              style="--mdc-icon-size: 12px; color: ${data.battery_color};"
+                            ></ha-icon
+                            >${data.battery_level != null ? html`${data.battery_level}%` : ''}`
+                        : ''}
+                      ${data.window_icon
+                        ? html`<span class="window-indicator">
+                            <ha-icon
+                              icon="${data.window_icon}"
+                              style="--mdc-icon-size: 12px; color: var(--secondary-text-color);"
+                            ></ha-icon>
+                          </span>`
+                        : ''}
+                      ${data.fan_icon
+                        ? html`<span class="fan-indicator ${data.fan_state === 'on' ? 'fan-animating' : ''}">
+                            <ha-icon
+                              icon="${data.fan_icon}"
+                              style="--mdc-icon-size: 12px; color: ${data.fan_state === 'on' ? 'var(--state-fan-active-color, var(--state-active-color))' : 'var(--secondary-text-color)'};"
+                            ></ha-icon>
+                          </span>`
+                        : ''}
+                    `
                   : ''}
                 &nbsp;
               </div>
@@ -387,6 +441,26 @@ export class cardContent {
               >
             </div>
           </div>
+          ${config.display.icons_inline === false && (data.battery_icon || data.window_icon || data.fan_icon)
+            ? html`
+                <div class="right-side-icons">
+                  ${data.battery_icon
+                    ? html`<div style="display:flex; flex-direction:column; align-items:center; color: ${data.battery_color};">
+                        <ha-icon icon="${data.battery_icon}" style="--mdc-icon-size: 14px;"></ha-icon>
+                        ${data.battery_level != null ? html`<span style="font-size: 8px;">${data.battery_level}%</span>` : ''}
+                      </div>`
+                    : ''}
+                  ${data.window_icon
+                    ? html`<ha-icon icon="${data.window_icon}" style="--mdc-icon-size: 14px; color: var(--secondary-text-color);"></ha-icon>`
+                    : ''}
+                  ${data.fan_icon
+                    ? html`<span class="${data.fan_state === 'on' ? 'fan-animating' : ''}">
+                        <ha-icon icon="${data.fan_icon}" style="--mdc-icon-size: 14px; color: ${data.fan_state === 'on' ? 'var(--state-fan-active-color, var(--state-active-color))' : 'var(--secondary-text-color)'};"></ha-icon>
+                      </span>`
+                    : ''}
+                </div>
+              `
+            : ''}
         </div>
       </div>
     `;
