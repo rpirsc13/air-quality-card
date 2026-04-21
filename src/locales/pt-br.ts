@@ -1,4 +1,11 @@
 export default {
+  quality: {
+    1: 'Perfect',
+    2: 'OK',
+    3: 'Warning',
+    4: 'Bad',
+    5: 'Hazardous',
+  },
   state: {
     1: 'Muito Baixo',
     2: 'Aceitavel Baixo',

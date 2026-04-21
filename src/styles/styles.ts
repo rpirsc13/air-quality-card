@@ -46,10 +46,19 @@ export const styles = css`
     padding: 0px;
   }
 
-  .section.disabled {
+  .section.disabled,
+  .section-compact.disabled {
     opacity: 0.4;
     filter: grayscale(0.8);
     pointer-events: none;
+  }
+
+  @keyframes blinker {
+    50% { opacity: 0.3; }
+  }
+
+  .blink {
+    animation: blinker 2s linear infinite;
   }
 
   .section-compact {
@@ -154,6 +163,10 @@ export const styles = css`
     line-height: 15px;
     position: relative;
     margin: 0px;
+  }
+
+  .grid-container.quality-mode {
+    grid-template-columns: repeat(5, 1fr);
   }
 
   .grid-item {

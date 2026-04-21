@@ -58,6 +58,13 @@ export default {
     5: 'Acceptable High',
     6: 'Too High',
   },
+  quality: {
+    1: 'Perfect',
+    2: 'OK',
+    3: 'Warning',
+    4: 'Bad',
+    5: 'Hazardous',
+  },
   sensor: {
     temperature: 'Temperature',
     ph: 'pH',

@@ -36,7 +36,7 @@ export class cardContent {
     return html`
       <!-- ##### ${data.name} section ##### -->
       <div
-        class="${data.disabled ? 'section disabled' : 'section'}"
+        class="${data.disabled ? 'section disabled' : 'section'} ${data.blink ? 'blink' : ''}"
         @click=${() => cardContent._moreinfo(data.entity)}
       >
         <div class="section-row">
@@ -79,47 +79,80 @@ export class cardContent {
                     <div
                       class="progress-bar-child"
                       style="background: linear-gradient(to right,
-                  ${data.mode === 'heatflow'
-                        ? `${config.colors.cool} 15%,
+                  ${data.mode === 'quality'
+                        ? `${config.colors.cool} 10%,
+                     ${config.colors.normal} 30%,
                      ${config.colors.low} 50%,
-                     ${config.colors.warn} 85%`
-                        : `${config.colors.warn} 5%,
-                     ${config.colors.low} 30%,
-                     ${config.colors.normal},
-                     ${config.colors.normal},
-                     ${config.colors.low} 70%,
-                     ${config.colors.warn} 95%`}
+                     ${config.colors.warn} 70%,
+                     ${config.colors.hazardous} 90%`
+                        : data.mode === 'heatflow'
+                          ? `${config.colors.cool} 15%,
+                       ${config.colors.low} 50%,
+                       ${config.colors.warn} 85%`
+                          : `${config.colors.warn} 5%,
+                       ${config.colors.low} 30%,
+                       ${config.colors.normal},
+                       ${config.colors.normal},
+                       ${config.colors.low} 70%,
+                       ${config.colors.warn} 95%`}
                 );"
                     ></div>
                   `
                 : html`
-                    <div class="grid-container">
-                      <div
-                        style="background-color: ${config.colors
-                          .warn}; grid-column: 1; border-radius: 5px 0px 0px 5px"
-                        class="grid-item item-row"
-                      ></div>
-                      <div
-                        style="background-color: ${config.colors.low}; grid-column: 2;"
-                        class="grid-item item-row"
-                      ></div>
-                      <div
-                        style="background-color: ${config.colors.normal}; grid-column: 3;"
-                        class="grid-item item-row"
-                      ></div>
-                      <div
-                        style="background-color: ${config.colors.normal}; grid-column: 4;"
-                        class="grid-item item-row"
-                      ></div>
-                      <div
-                        style="background-color: ${config.colors.low}; grid-column: 5;"
-                        class="grid-item item-row"
-                      ></div>
-                      <div
-                        style="background-color: ${config.colors
-                          .warn}; grid-column: 6; border-radius: 0px 5px 5px 0px;"
-                        class="grid-item item-row"
-                      ></div>
+                    <div class="grid-container ${data.mode === 'quality' ? 'quality-mode' : ''}">
+                      ${data.mode === 'quality'
+                        ? html`
+                            <div
+                              style="background-color: ${config.colors
+                                .cool}; grid-column: 1; border-radius: 5px 0px 0px 5px"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.normal}; grid-column: 2;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.low}; grid-column: 3;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.warn}; grid-column: 4;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors
+                                .hazardous}; grid-column: 5; border-radius: 0px 5px 5px 0px;"
+                              class="grid-item item-row"
+                            ></div>
+                          `
+                        : html`
+                            <div
+                              style="background-color: ${config.colors
+                                .warn}; grid-column: 1; border-radius: 5px 0px 0px 5px"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.low}; grid-column: 2;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.normal}; grid-column: 3;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.normal}; grid-column: 4;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.low}; grid-column: 5;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors
+                                .warn}; grid-column: 6; border-radius: 0px 5px 5px 0px;"
+                              class="grid-item item-row"
+                            ></div>
+                          `}
                     </div>
                     <div
                       style="display: flex; justify-content: space-between; margin: 0 10px; font-size: 0.7em; color: var(--secondary-text-color);"
@@ -194,7 +227,7 @@ export class cardContent {
     }
     return html`
       <!-- ##### ${data.name} section ##### -->
-      <div class="section-compact" @click=${() => cardContent._moreinfo(data.entity)}>
+      <div class="section-compact ${data.disabled ? 'disabled' : ''} ${data.blink ? 'blink' : ''}" @click=${() => cardContent._moreinfo(data.entity)}>
         <div class="section-row">
           ${!data.hide_icon
             ? html`
@@ -217,47 +250,80 @@ export class cardContent {
                     <div
                       class="progress-bar-child"
                       style="background: linear-gradient(to right,
-                  ${data.mode === 'heatflow'
-                        ? `${config.colors.cool} 15%,
+                  ${data.mode === 'quality'
+                        ? `${config.colors.cool} 10%,
+                     ${config.colors.normal} 30%,
                      ${config.colors.low} 50%,
-                     ${config.colors.warn} 85%`
-                        : `${config.colors.warn} 5%,
-                     ${config.colors.low} 30%,
-                     ${config.colors.normal},
-                     ${config.colors.normal},
-                     ${config.colors.low} 70%,
-                     ${config.colors.warn} 95%`}
+                     ${config.colors.warn} 70%,
+                     ${config.colors.hazardous} 90%`
+                        : data.mode === 'heatflow'
+                          ? `${config.colors.cool} 15%,
+                       ${config.colors.low} 50%,
+                       ${config.colors.warn} 85%`
+                          : `${config.colors.warn} 5%,
+                       ${config.colors.low} 30%,
+                       ${config.colors.normal},
+                       ${config.colors.normal},
+                       ${config.colors.low} 70%,
+                       ${config.colors.warn} 95%`}
                 );"
                     ></div>
                   `
                 : html`
-                    <div class="grid-container">
-                      <div
-                        style="background-color: ${config.colors
-                          .warn}; grid-column: 1; border-radius: 5px 0px 0px 5px"
-                        class="grid-item item-row"
-                      ></div>
-                      <div
-                        style="background-color: ${config.colors.low}; grid-column: 2;"
-                        class="grid-item item-row"
-                      ></div>
-                      <div
-                        style="background-color: ${config.colors.normal}; grid-column: 3;"
-                        class="grid-item item-row"
-                      ></div>
-                      <div
-                        style="background-color: ${config.colors.normal}; grid-column: 4;"
-                        class="grid-item item-row"
-                      ></div>
-                      <div
-                        style="background-color: ${config.colors.low}; grid-column: 5;"
-                        class="grid-item item-row"
-                      ></div>
-                      <div
-                        style="background-color: ${config.colors
-                          .warn}; grid-column: 6; border-radius: 0px 5px 5px 0px;"
-                        class="grid-item item-row"
-                      ></div>
+                    <div class="grid-container ${data.mode === 'quality' ? 'quality-mode' : ''}">
+                      ${data.mode === 'quality'
+                        ? html`
+                            <div
+                              style="background-color: ${config.colors
+                                .cool}; grid-column: 1; border-radius: 5px 0px 0px 5px"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.normal}; grid-column: 2;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.low}; grid-column: 3;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.warn}; grid-column: 4;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors
+                                .hazardous}; grid-column: 5; border-radius: 0px 5px 5px 0px;"
+                              class="grid-item item-row"
+                            ></div>
+                          `
+                        : html`
+                            <div
+                              style="background-color: ${config.colors
+                                .warn}; grid-column: 1; border-radius: 5px 0px 0px 5px"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.low}; grid-column: 2;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.normal}; grid-column: 3;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.normal}; grid-column: 4;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors.low}; grid-column: 5;"
+                              class="grid-item item-row"
+                            ></div>
+                            <div
+                              style="background-color: ${config.colors
+                                .warn}; grid-column: 6; border-radius: 0px 5px 5px 0px;"
+                              class="grid-item item-row"
+                            ></div>
+                          `}
                     </div>
                     <div
                       style="display: flex; justify-content: space-between; margin: 0 10px; font-size: 0.7em; color: var(--secondary-text-color);"

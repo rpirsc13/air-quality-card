@@ -278,7 +278,7 @@ export class MonitorSensorEditor extends LitElement {
           ></ha-entity-picker>
         </div>
 
-        ${this.freeform || !this.registry[type]
+        ${this.freeform || !this.registry[type] || config.mode === 'quality'
           ? html`
               <div class="sensor-field-row">
                 <ha-select
@@ -289,10 +289,44 @@ export class MonitorSensorEditor extends LitElement {
                 >
                   <mwc-list-item value="centric">Centric</mwc-list-item>
                   <mwc-list-item value="heatflow">Heatflow</mwc-list-item>
+                  <mwc-list-item value="quality">Quality</mwc-list-item>
                 </ha-select>
               </div>
+              ${config.mode === 'quality'
+                ? html`
+                    <div class="sensor-field-row">
+                      <ha-textfield
+                        .label=${'Limits (comma-separated, e.g. 10,20,35,50)'}
+                        .value=${config.limits ? config.limits.join(',') : ''}
+                        @change=${(e: Event) => {
+                          const val = (e.target as HTMLInputElement).value;
+                          const limits = val
+                            ? val.split(',').map(v => Number(v.trim())).filter(n => !isNaN(n))
+                            : undefined;
+                          this._updateField(type, index, 'limits', limits);
+                        }}
+                      ></ha-textfield>
+                    </div>
+                  `
+                : nothing}
             `
           : nothing}
+
+        <div class="sensor-field-row">
+          <ha-select
+            .label=${'Blink Threshold'}
+            .value=${config.blink_threshold || ''}
+            @selected=${(e: CustomEvent) => {
+              const val = (e.target as HTMLSelectElement).value;
+              this._updateField(type, index, 'blink_threshold', val === '' ? undefined : val);
+            }}
+          >
+            <mwc-list-item value="">None</mwc-list-item>
+            <mwc-list-item value="warning">Warning or worse</mwc-list-item>
+            <mwc-list-item value="bad">Bad or worse</mwc-list-item>
+            <mwc-list-item value="hazardous">Hazardous</mwc-list-item>
+          </ha-select>
+        </div>
       </div>
     `;
   }
