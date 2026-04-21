@@ -235,6 +235,7 @@ export class MonitorCardBase extends LitElement {
       newData.value = null;
       newData.entity = entity;
       newData.not_found = true;
+      newData.label_positions = [0, 25, 50, 75, 100];
       return newData;
     }
 
@@ -263,6 +264,7 @@ export class MonitorCardBase extends LitElement {
       newData.separator = '';
       newData.unit = '';
       newData.setpoint_class = ['', '', '', '', ''];
+      newData.label_positions = [0, 25, 50, 75, 100];
       newData.progressClass = '';
       if (config.display.show_last_updated) {
         newData.last_updated = this.resolveLastUpdated(
