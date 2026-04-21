@@ -12,6 +12,7 @@ export const DISPLAY_SCHEMA: HaFormSchema[] = [
   { name: 'show_last_updated', selector: { boolean: {} } },
   { name: 'show_icons', selector: { boolean: {} } },
   { name: 'show_units', selector: { boolean: {} } },
+  { name: 'icons_inline', selector: { boolean: {} } },
   { name: 'gradient', selector: { boolean: {} } },
   {
     name: 'language',

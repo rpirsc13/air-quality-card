@@ -279,6 +279,33 @@ export const styles = css`
     margin-left: 4px;
   }
 
+  .window-indicator,
+  .fan-indicator {
+    font-size: 9px;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .fan-animating ha-icon {
+    animation: spin 2s linear infinite;
+  }
+
+  .right-side-icons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding-left: 8px;
+    width: 20px;
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;

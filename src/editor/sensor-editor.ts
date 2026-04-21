@@ -235,6 +235,26 @@ export class MonitorSensorEditor extends LitElement {
             this._updateField(type, index, 'battery_entity', e.detail.value || undefined)}
         ></ha-entity-picker>
 
+        <ha-entity-picker
+          .hass=${this.hass}
+          .value=${config.window_entity || ''}
+          .label=${'Window entity (optional — shows open/closed state)'}
+          .includeDomains=${['binary_sensor']}
+          allow-custom-entity
+          @value-changed=${(e: CustomEvent) =>
+            this._updateField(type, index, 'window_entity', e.detail.value || undefined)}
+        ></ha-entity-picker>
+
+        <ha-entity-picker
+          .hass=${this.hass}
+          .value=${config.fan_entity || ''}
+          .label=${'Fan entity (optional — shows fan state)'}
+          .includeDomains=${['binary_sensor', 'fan', 'switch']}
+          allow-custom-entity
+          @value-changed=${(e: CustomEvent) =>
+            this._updateField(type, index, 'fan_entity', e.detail.value || undefined)}
+        ></ha-entity-picker>
+
         <div class="sensor-field-row">
           <ha-entity-picker
             .hass=${this.hass}

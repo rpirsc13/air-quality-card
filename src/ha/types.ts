@@ -45,6 +45,7 @@ export interface DisplayConfig {
   show_last_updated: boolean;
   show_icons: boolean;
   show_units: boolean;
+  icons_inline: boolean;
   gradient: boolean;
   language: string;
 }
@@ -86,6 +87,8 @@ export interface SensorUserConfig {
   setpoint_entity?: string;
   min_limit_entity?: string;
   battery_entity?: string;
+  window_entity?: string;
+  fan_entity?: string;
 }
 
 export interface CardConfig {
@@ -138,6 +141,10 @@ export interface SensorData {
   battery_level?: number | null;
   battery_icon?: string;
   battery_color?: string;
+  window_icon?: string;
+  window_state?: string;
+  fan_icon?: string;
+  fan_state?: string;
   blink?: boolean;
 }
 
