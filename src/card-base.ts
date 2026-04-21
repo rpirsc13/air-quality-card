@@ -489,8 +489,10 @@ export class MonitorCardBase extends LitElement {
       // [limit2, limit3] -> 0.4 to 0.6
       // [limit3, limit4] -> 0.6 to 0.8
       // [limit4, limit4 + limit4 - limit3] -> 0.8 to 1.0
+      // We also dynamically extend the last segment if the value exceeds the max limit
 
-      const limitsExtended = [0, limits[0], limits[1], limits[2], limits[3], limits[3] + (limits[3] - limits[2])];
+      const maxLimit = Math.max(newData.value, limits[3] + (limits[3] - limits[2]));
+      const limitsExtended = [0, limits[0], limits[1], limits[2], limits[3], maxLimit];
 
       toRatio = (v: number) => {
         if (v <= limitsExtended[0]) return 0;
@@ -508,6 +510,17 @@ export class MonitorCardBase extends LitElement {
     } else {
       barLeft = sp_val - 3 * sp_step_low;
       barWidth = 3 * sp_step_low + 3 * sp_step_high;
+
+      // dynamically adjust if value is outside the boundaries
+      if (newData.value > barLeft + barWidth) {
+        barWidth = newData.value - barLeft;
+      }
+      if (newData.value < barLeft) {
+        const oldRight = barLeft + barWidth;
+        barLeft = newData.value;
+        barWidth = oldRight - barLeft;
+      }
+
       const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
       toRatio = (v: number) => (barWidth > 0 ? clamp01((v - barLeft) / barWidth) : 0);
     }
