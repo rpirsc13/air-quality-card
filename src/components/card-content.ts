@@ -386,7 +386,7 @@ export class cardContent {
                         ? html`<span class="window-indicator">
                             <ha-icon
                               icon="${data.window_icon}"
-                              style="--mdc-icon-size: 12px; color: var(--secondary-text-color);"
+                              style="--mdc-icon-size: 12px; color: white;"
                             ></ha-icon>
                           </span>`
                         : ''}
@@ -394,7 +394,7 @@ export class cardContent {
                         ? html`<span class="fan-indicator ${data.fan_state === 'on' ? 'fan-animating' : ''}">
                             <ha-icon
                               icon="${data.fan_icon}"
-                              style="--mdc-icon-size: 12px; color: ${data.fan_state === 'on' ? 'var(--state-fan-active-color, var(--state-active-color))' : 'var(--secondary-text-color)'};"
+                              style="--mdc-icon-size: 12px; color: ${data.fan_state === 'on' ? 'var(--state-fan-active-color, var(--state-active-color))' : 'white'};"
                             ></ha-icon>
                           </span>`
                         : ''}
