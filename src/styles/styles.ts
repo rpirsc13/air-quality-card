@@ -207,6 +207,16 @@ export const styles = css`
     text-align: right;
     color: black;
     z-index: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .cursor-text[style*="text-align: right"] {
+    justify-content: flex-end;
+  }
+
+  .cursor-text[style*="text-align: left"] {
+    justify-content: flex-start;
   }
 
   .progress-bar-child {
@@ -304,6 +314,11 @@ export const styles = css`
     gap: 4px;
     padding-left: 8px;
     width: 20px;
+  }
+
+  .section-compact .right-side-icons {
+    flex-direction: row;
+    width: auto;
   }
 
   @keyframes fadeIn {

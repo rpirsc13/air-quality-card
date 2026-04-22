@@ -546,13 +546,13 @@ export class MonitorCardBase extends LitElement {
     const ratio = toRatio(newData.value);
     newData.pct = (ratio * 100).toFixed(1);
     newData.pct_marker = ratio * 100;
-    newData.side_align = mode === 'quality' ? 'left' : (newData.value > sp_val ? 'right' : 'left');
-    newData.pct_cursor = mode === 'quality' ? ratio * 100 : (newData.value > sp_val ? 100 - ratio * 100 : ratio * 100);
-    newData.pct_state_step = mode === 'quality' ? ratio * 100 + 1 : (newData.value > sp_val ? 100 - ratio * 100 + 1 : ratio * 100 + 1);
+    newData.side_align = mode === 'quality' ? (ratio > 0.5 ? 'right' : 'left') : (newData.value > sp_val ? 'right' : 'left');
+    newData.pct_cursor = mode === 'quality' ? (ratio > 0.5 ? 100 - ratio * 100 : ratio * 100) : (newData.value > sp_val ? 100 - ratio * 100 : ratio * 100);
+    newData.pct_state_step = mode === 'quality' ? (ratio > 0.5 ? 100 - ratio * 100 + 1 : ratio * 100 + 1) : (newData.value > sp_val ? 100 - ratio * 100 + 1 : ratio * 100 + 1);
     const ratioMinVal = toRatio(newData.min_value) * 100;
     const ratioMaxVal = toRatio(newData.max_value) * 100;
-    newData.pct_min = mode === 'quality' ? ratioMinVal : (newData.value > sp_val ? 100 - ratioMinVal : ratioMinVal);
-    newData.pct_max = mode === 'quality' ? ratioMaxVal : (newData.value > sp_val ? 100 - ratioMaxVal : ratioMaxVal);
+    newData.pct_min = mode === 'quality' ? (ratio > 0.5 ? 100 - ratioMinVal : ratioMinVal) : (newData.value > sp_val ? 100 - ratioMinVal : ratioMinVal);
+    newData.pct_max = mode === 'quality' ? (ratio > 0.5 ? 100 - ratioMaxVal : ratioMaxVal) : (newData.value > sp_val ? 100 - ratioMaxVal : ratioMaxVal);
 
     // Label positions
     newData.label_positions = [
