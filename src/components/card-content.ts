@@ -376,11 +376,13 @@ export class cardContent {
                 ${config.display.icons_inline !== false
                   ? html`
                       ${data.battery_icon
-                        ? html`<ha-icon
+                        ? html`<span class="battery-indicator" style="color: ${data.battery_color};">
+                            <ha-icon
                               icon="${data.battery_icon}"
-                              style="--mdc-icon-size: 12px; color: ${data.battery_color};"
+                              style="--mdc-icon-size: 12px;"
                             ></ha-icon
-                            >${data.battery_level != null ? html`${data.battery_level}%` : ''}`
+                            >${data.battery_level != null ? html`${data.battery_level}%` : ''}
+                          </span>`
                         : ''}
                       ${data.window_icon
                         ? html`<span class="window-indicator">
